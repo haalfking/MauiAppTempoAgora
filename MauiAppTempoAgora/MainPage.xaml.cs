@@ -1,6 +1,7 @@
 ﻿using MauiAppTempoAgora.Models;
 using MauiAppTempoAgora.Services;
 using System.Threading.Tasks;
+using Microsoft.Maui.Networking;
 
 namespace MauiAppTempoAgora
 {
@@ -21,6 +22,14 @@ namespace MauiAppTempoAgora
             {
                 if (!string.IsNullOrEmpty(txt_cidade.Text))
                 {
+                    if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
+                    {
+                        await DisplayAlert("Sem internet", "Você está sem conexão.", "OK");
+                        return;
+                    }
+
+
+
                     Tempo? t = await DataService.GetPrevisao(txt_cidade.Text);
 
                     if (t != null)
@@ -32,13 +41,18 @@ namespace MauiAppTempoAgora
                                          $"Nascer do Sol: {t.sunrise} \n" +
                                          $"Por do Sol: {t.sunset} \n" +
                                          $"Temp Máx: {t.temp_max} \n" +
-                                         $"Temp Mín: {t.temp_min} \n";
+                                         $"Temp Mín: {t.temp_min} \n" +
+                                         $"Visibilidade: {t.visibility} \n" +
+                                         $"Velocidade do Vento: {t.speed} \n" +
+                                         $"Clima: {t.description} \n";
+
 
                         lbl_res.Text = dados_previsao;
 
                     }
                     else
                     {
+                        await DisplayAlert("Erro", "Cidade não encontrada.", "OK");
                         lbl_res.Text = "Sem dados de Previsão.";
                     }
 

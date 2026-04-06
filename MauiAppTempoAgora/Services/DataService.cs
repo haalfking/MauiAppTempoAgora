@@ -18,6 +18,11 @@ namespace MauiAppTempoAgora.Services
             {
                 HttpResponseMessage resp = await client.GetAsync(url);
 
+                if (resp.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    return null;
+                }
+
                 if (resp.IsSuccessStatusCode)
                 {
                     string json = await resp.Content.ReadAsStringAsync();
